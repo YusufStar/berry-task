@@ -20,6 +20,10 @@ module.exports = {
         "heading": "3.5rem",
         "small": "1.125rem",
         "x-small": "0.9375rem",
+        "nav-item": "0.875rem",
+      },
+      transitionTimingFunction: {
+        "trans-width": "cubic-bezier(0.4, 0, 0.6, 1) "
       }
     }
   },

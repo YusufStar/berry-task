@@ -16,10 +16,10 @@ const MainLayout = ({ children }) => {
         <Navbar changeOpen={changeSideBar}/>
       </div>
 
-      <div class="flex flex-1">
+      <div class="flex flex-1 h-full">
         <Sidebar isOpen={sideOpen}/>
 
-        <div class="flex-1 bg-gray-200 p-2">
+        <div class="flex-1 h-full bg-gray-200 p-2">
           {children}
         </div>
       </div>

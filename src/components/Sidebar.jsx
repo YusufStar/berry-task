@@ -1,11 +1,11 @@
 'use client'
-import React, { useState } from 'react'
+import React, {useEffect, useState} from 'react'
 import DefaultIcon from '@/assets/DefaultIcon'
 import NavigationButton from './NavigationButton'
 import AnalyticsIcon from '@/assets/AnalyticsIcon'
 import UserIcon from '@/assets/UserIcon'
 import classNames from 'classnames'
-import { usePathname } from 'next/navigation'
+import {usePathname} from 'next/navigation'
 
 const data = [
   {
@@ -64,26 +64,26 @@ const data = [
   },
 ];
 
-const Sidebar = ({ isOpen }) => {
+const Sidebar = ({ isOpen, setIsOpen }) => {
   const pathname = usePathname()
   const [openMenu, setOpenMenu] = useState(pathname.split("/"));
+
+  useEffect(() => {
+    setOpenMenu(pathname.split("/"))
+  }, [pathname])
 
   const handleToggleMenu = (path) => {
     setOpenMenu((prevMenus) => {
       const menuIndex = prevMenus?.indexOf(path);
       if (menuIndex !== -1) {
-        const new_ar = [...prevMenus?.slice(0, menuIndex), ...prevMenus?.slice(menuIndex + 1)]
-        console.log(new_ar);
-        return new_ar;
+        return [...prevMenus?.slice(0, menuIndex), ...prevMenus?.slice(menuIndex + 1)];
       } else {
-        console.log([...prevMenus, path]);
         return [...prevMenus, path];
       }
     });
   };
 
   const renderChildButtons = (buttons, depth, parentPaths) => {
-    console.log(buttons);
     return (
       <div className={`ml-4 flex flex-col gap-2`}>
         {buttons.map((button, btn_idx) => (
@@ -121,7 +121,7 @@ const Sidebar = ({ isOpen }) => {
                 <NavigationButton
                   childs={button.childs}
                   paths={[dt.path, button.path]}
-                  className={`${isOpen ? "w-full py-3" : "w-fit h-fit p-3 ml-1"} my2`}
+                  className={`${isOpen ? "w-full py-3" : `w-fit h-fit p-3 ml-1 `} my2`}
                   icon={button.Icon}
                   label={isOpen ? button.label : null}
                   isActive={openMenu?.includes(button.path)}

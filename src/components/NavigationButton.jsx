@@ -12,6 +12,7 @@ const NavigationButton = ({
   isActive,
   onClick,
   childs,
+  isOpen
 }) => {
   const router = useRouter();
   const pathname = usePathname()
@@ -36,8 +37,8 @@ const NavigationButton = ({
         "transition-all duration-200 ease-in-out",
         Icon && !label ? "justify-center" : "px-4",
         pathname === path ? "bg-trans-purple" : "bg-white hover:bg-trans-purple",
-        
-        className
+         !isOpen && isActive ? "!bg-trans-purple" : "",
+          className
       )}
     >
       {Icon && <Icon className="stroke-gray" />}

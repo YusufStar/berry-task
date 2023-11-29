@@ -3,12 +3,12 @@ import Link from "next/link";
 export default function Home() {
   return (
     <div className="w-screen h-screen background flex items-center justify-center">
-      <div className="h-fit w-3/5 flex flex-col">
+      <div className="h-fit w-full px-[10%] flex flex-col">
         <div className="flex flex-col">
-          <span className="text-heading text-dark leading-tight font-bold max-w-[480px] break-words">Use Berry to Power Your Next</span>
-          <span className="text-heading text-blue font-bold max-w-[480px] break-words mt-2">React Project</span>
+          <span className="text-sm-heading md:text-heading text-dark leading-tight font-bold max-w-[480px] break-words">Use Berry to Power Your Next</span>
+          <span className="text-sm-heading md:text-heading text-blue w-fit font-bold max-w-[480px] break-words mt-2">React Project</span>
 
-          <p className="my-4 max-w-[480px] break-words text-small">
+          <p className="my-4 max-w-[480px] w-fit break-words text-nav-item md:text-small">
             Berry is React based Dashboard template which helps you to build faster and beautiful web applications.
           </p>
 

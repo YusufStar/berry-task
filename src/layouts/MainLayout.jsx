@@ -11,15 +11,15 @@ const MainLayout = ({ children }) => {
   }
 
   return (
-    <div class="flex min-h-screen overflow-y-auto flex-col background">
-      <div class="flex items-center h-fit p-4 text-black">
+    <div className="flex h-screen overflow-hidden flex-col background">
+      <div className="flex items-center h-fit p-4 text-black">
         <Navbar changeOpen={changeSideBar}/>
       </div>
 
-      <div class="flex flex-1 h-full">
-        <Sidebar isOpen={sideOpen}/>
+      <div className="flex flex-1 h-full">
+        <Sidebar setIsOpen={(value) => setSideOpen(value)} isOpen={sideOpen}/>
 
-        <div class="flex-1 h-full bg-gray-200 p-2">
+        <div className="flex flex-1 h-full bg-gray-200 p-2 bg-fuchsia-50 mr-5 rounded-lg">
           {children}
         </div>
       </div>

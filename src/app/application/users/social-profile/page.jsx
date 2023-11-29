@@ -2,7 +2,7 @@ import React from 'react'
 
 const SocialProfile = () => {
   return (
-    <div>SocialProfile</div>
+    <div className="overflow-y-auto w-full h-full flex items-center justify-center">SocialProfile</div>
   )
 }
 

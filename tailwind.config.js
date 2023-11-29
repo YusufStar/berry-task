@@ -18,6 +18,7 @@ module.exports = {
       },
       fontSize: {
         "heading": "3.5rem",
+        "sm-heading": "1.95rem",
         "small": "1.125rem",
         "x-small": "0.9375rem",
         "nav-item": "0.875rem",

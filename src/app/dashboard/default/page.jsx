@@ -2,7 +2,7 @@ import React from 'react'
 
 const Default = () => {
   return (
-    <div>Default</div>
+    <div className="overflow-y-auto w-full h-full flex items-center justify-center">Default</div>
   )
 }
 

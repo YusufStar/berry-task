@@ -2,7 +2,7 @@ import React from 'react'
 
 const AccountProfile = () => {
   return (
-    <div>AccountProfile</div>
+    <div className="overflow-y-auto w-full h-full flex items-center justify-center">AccountProfile</div>
   )
 }
 

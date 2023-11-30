@@ -19,7 +19,7 @@ const MainLayout = ({ children }) => {
       <div className="flex flex-1 h-full">
         <Sidebar setIsOpen={(value) => setSideOpen(value)} isOpen={sideOpen}/>
 
-        <div className="flex flex-1 h-full bg-gray-200 p-2 bg-fuchsia-50 mr-5 rounded-lg">
+        <div className="flex flex-1 h-full overflow-y-scroll pb-24 bg-gray-200 p-2 bg-fuchsia-50 mr-5 rounded-lg">
           {children}
         </div>
       </div>

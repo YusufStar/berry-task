@@ -1,143 +1,195 @@
 'use client'
-import React, {useEffect, useState} from 'react'
-import DefaultIcon from '@/assets/DefaultIcon'
-import NavigationButton from './NavigationButton'
-import AnalyticsIcon from '@/assets/AnalyticsIcon'
-import UserIcon from '@/assets/UserIcon'
-import classNames from 'classnames'
-import {usePathname} from 'next/navigation'
+import React, {useEffect, useState, useRef} from 'react'
+import { useMediaQuery } from "@uidotdev/usehooks"
+import classNames from "classnames";
+import ChevronsLeft from "@/assets/ChevronsLeft";
+import {usePathname} from "next/navigation";
+import ChevronsRight from "@/assets/ChevronsRight";
+import ButtonList from "@/components/ButtonList";
+import DefaultIcon from "@/assets/DefaultIcon";
+import AnalyticsIcon from "@/assets/AnalyticsIcon";
+import UserIcon from "@/assets/UserIcon";
 
-const data = [
-  {
-    title: "Dashboard",
-    path: "dashboard",
-    buttons: [
-      {
-        Icon: DefaultIcon,
+const buttons = [
+    {
+        id: "1",
         label: "Default",
-        path: "default",
-        childs: []
-      },
-      {
-        Icon: AnalyticsIcon,
+        icon : DefaultIcon,
+        path: "/dashboard/default",
+        role: ["user", "guest", "admin"]
+    },
+    {
+        id: "2",
         label: "Analytics",
-        path: "analytics",
-        childs: []
-      },
-    ]
-  },
-  {
-    title: "Application",
-    path: "application",
-    buttons: [
-      {
-        Icon: UserIcon,
+        icon: AnalyticsIcon,
+        path: "/dashboard/analytics",
+        role: ["admin"]
+    },
+    {
+        id: "3",
         label: "Users",
-        isChilds: true,
-        path: "users",
+        icon: UserIcon,
+        path: "",
+        role: ["user", "guest"],
         childs: [
-          {
-            label: "Account profile",
-            path: "account-profile",
-            isChilds: true,
-            childs: [
-              {
-                label: "Profile 1",
-                path: "profile-1",
-                childs: []
-              },
-              {
-                label: "Profile 2",
-                path: "profile-2",
-                childs: []
-              },
-            ]
-          },
-          {
-            label: "Social profile",
-            path: "social-profile",
-            childs: []
-          }
-        ]
-      },
-    ]
-  },
-];
+            {
+                id: "3.1",
+                label: "Account Profile",
+                path: "",
+                childs: [
+                    {
+                        id: "3.1.1",
+                        label: "Profile 1",
+                        path: "/application/users/account-profile/profile-1",
+                    },
+                    {
+                        id: "3.1.2",
+                        label: "Profile 2",
+                        path: "/application/users/account-profile/profile-2",
+                    }
+                ]
+            },
+            {
+                id: "3.2",
+                label: "Social Profile",
+                path: "/application/users/social-profile"
+            }
+        ],
+    },
+]
 
 const Sidebar = ({ isOpen, setIsOpen }) => {
-  const pathname = usePathname()
-  const [openMenu, setOpenMenu] = useState(pathname.split("/"));
+    const pathname = usePathname()
+    const isMobile = useMediaQuery("(max-width: 768px)");
+    const isResizingRef = useRef(false);
+    const sidebarRef = useRef(null);
+    const navbarRef = useRef(null);
+    const [isResetting, setIsResetting] = useState(false);
+    const [isCollapsed, setIsCollapsed] = useState(isMobile);
 
-  useEffect(() => {
-    setOpenMenu(pathname.split("/"))
-  }, [pathname])
+    useEffect(() => {
+        if (isMobile) {
+            collapse();
+        } else {
+            resetWidth();
+        }
+    }, [isMobile]);
 
-  const handleToggleMenu = (path) => {
-    setOpenMenu((prevMenus) => {
-      const menuIndex = prevMenus?.indexOf(path);
-      if (menuIndex !== -1) {
-        return [...prevMenus?.slice(0, menuIndex), ...prevMenus?.slice(menuIndex + 1)];
-      } else {
-        return [...prevMenus, path];
-      }
-    });
-  };
+    useEffect(() => {
+        if (isMobile) {
+            collapse();
+        }
+    }, [pathname, isMobile]);
 
-  const renderChildButtons = (buttons, depth, parentPaths) => {
-    return (
-      <div className={`ml-4 flex flex-col gap-2`}>
-        {buttons.map((button, btn_idx) => (
-          <React.Fragment key={btn_idx}>
-            <NavigationButton
-              childs={button.childs}
-              paths={[...parentPaths, button.path]}
-              className="w-full py-3 list-disc"
-              label={button.label}
-              isActive={openMenu?.includes(button.path)}
-              onClick={() => handleToggleMenu(button.path)}
-            />
-            {button.isChilds && openMenu?.includes(button.path) && button.childs.length > 0 && (
-              renderChildButtons(button.childs, depth + 1, [...parentPaths, button.path])
-            )}
-          </React.Fragment>
-        ))}
-      </div>
-    );
-  };
+    const handleMouseDown = (
+        event
+    ) => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        isResizingRef.current = true;
+        document.addEventListener("mousemove", handleMouseMove);
+        document.addEventListener("mouseup", handleMouseUp);
+    };
+
+    const handleMouseMove = (event) => {
+        if (!isResizingRef.current) return;
+        let newWidth = event.clientX;
+
+        if (newWidth < 240) newWidth = 240;
+        if (newWidth > 480) newWidth = 480;
+
+        if (sidebarRef.current && navbarRef.current) {
+            sidebarRef.current.style.width = `${newWidth}px`;
+            navbarRef.current.style.setProperty("left", `${newWidth}px`);
+            navbarRef.current.style.setProperty("width", `calc(100% - ${newWidth}px)`);
+        }
+    };
+
+    const handleMouseUp = () => {
+        isResizingRef.current = false;
+        document.removeEventListener("mousemove", handleMouseMove);
+        document.removeEventListener("mouseup", handleMouseUp);
+    };
+
+    const resetWidth = () => {
+        if (sidebarRef.current && navbarRef.current) {
+            setIsCollapsed(false);
+            setIsResetting(true);
+
+            sidebarRef.current.style.width = isMobile ? "100%" : "300px";
+            navbarRef.current.style.setProperty(
+                "width",
+                isMobile ? "0" : "calc(100% - 240px)"
+            );
+            navbarRef.current.style.setProperty(
+                "left",
+                isMobile ? "100%" : "240px"
+            );
+            setTimeout(() => setIsResetting(false), 300);
+        }
+    };
+
+    const collapse = () => {
+        if (sidebarRef.current && navbarRef.current) {
+            setIsCollapsed(true);
+            setIsResetting(true);
+
+            sidebarRef.current.style.width = "40px";
+            navbarRef.current.style.setProperty("width", "100%");
+            navbarRef.current.style.setProperty("left", "0");
+            setTimeout(() => setIsResetting(false), 300);
+        }
+    }
 
   return (
-    <aside className={classNames(
-      "md:shadow-sm shadow-lg flex flex-col px-2 bg-white h-[calc(100vh-85px)] overflow-y-auto transition-all ease-in-out duration-[395ms] z-50",
-      isOpen ? "w-[250px] opacity-100" : "w-0 opacity-0 md:opacity-100 md:w-[81.62px]",
-      "flex md:relative absolute"
-    )}>
-      {data.map((dt, dt_idx) => (
-        <div key={dt_idx} className='flex flex-col gap-2 border-b-[1px] border-b-trans-purple py-2.5'>
-          {isOpen && <span className='text-nav-item font-semibold'>{dt.title}</span>}
-
-          <div className="flex flex-col gap-2">
-            {dt.buttons.map((button, btn_idx) => (
-              <React.Fragment key={btn_idx}>
-                <NavigationButton
-                  childs={button.childs}
-                  paths={[dt.path, button.path]}
-                  className={`${isOpen ? "w-full py-3" : `w-fit h-fit p-3 ml-1 `} my2`}
-                  icon={button.Icon}
-                  label={isOpen ? button.label : null}
-                  isActive={openMenu?.includes(button.path)}
-                  isOpen={isOpen}
-                  onClick={() => handleToggleMenu(button.path)}
-                />
-                {button.isChilds && openMenu?.includes(button.path) && button.childs.length > 0 && isOpen && (
-                  renderChildButtons(button.childs, 1, [dt.path, button.path])
-                )}
-              </React.Fragment>
-            ))}
-          </div>
-        </div>
-      ))}
-    </aside>
-  );
+          <>
+              <aside
+                  ref={sidebarRef}
+                  className={classNames(
+                      "group/sidebar h-screen overflow-y-auto relative flex w-60 flex-col z-[99999] p-2 pt-8 shadow-sm",
+                      isResetting && "transition-all ease-in-out duration-300",
+                      isMobile && "w-0"
+                  )}
+              >
+                  <div
+                      onClick={isCollapsed ? resetWidth : collapse}
+                      role="button"
+                      className={classNames(
+                          "h-6 w-6 hover:bg-fuchsia-50 rounded-lg absolute top-3 right-2 opacity-0 group-hover/sidebar:opacity-100 transition",
+                          isMobile && "opacity-100"
+                      )}
+                  >
+                      {
+                          isCollapsed ? <ChevronsRight className="h-6 w-6" /> : <ChevronsLeft className="h-6 w-6" />
+                      }
+                  </div>
+                  <div className={
+                      classNames(
+                          !isCollapsed ? "mt-4 flex flex-col gap-2" : "hidden"
+                      )
+                  }>
+                      <ButtonList buttons={buttons} level={1}/>
+                  </div>
+                  {
+                      !isCollapsed && <div
+                          onMouseDown={handleMouseDown}
+                          onClick={resetWidth}
+                          className="opacity-0 group-hover/sidebar:opacity-100 transition cursor-ew-resize absolute h-full w-1 bg-[#dedede] right-0 top-0"
+                      />
+                  }
+              </aside>
+              <div
+                  ref={navbarRef}
+                  className={classNames(
+                      "absolute top-0 z-[99999] left-60 w-[calc(100%-240px)]",
+                      isResetting && "transition-all ease-in-out duration-300",
+                      isMobile && "left-0 w-full"
+                  )}
+              >
+              </div>
+          </>
+  )
 };
 
 export default Sidebar;

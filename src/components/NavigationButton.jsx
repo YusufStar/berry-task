@@ -2,47 +2,64 @@
 import classNames from 'classnames';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
+import {comment} from "postcss";
+import ChevronsLeft from "@/assets/ChevronsLeft";
+import ChevronsRight from "@/assets/ChevronsRight";
 
 const NavigationButton = ({
-  icon: Icon,
-  label,
-  className = "",
-  paths,
-  isActive,
+  id,
   onClick,
-  childs,
-  isOpen
+  label,
+  icon : Icon,
+  active,
+  level,
+  onExpand,
+  expanded,
+  isChilds,
+  child
 }) => {
-  const router = useRouter();
-  const pathname = usePathname()
-  const path = `/${paths.join("/")}`;
 
-  const handleClick = () => {
-    if (childs?.length !== 0) {
-      // Sadece alt menüyü aç veya kapat
-      onClick && onClick();
-    } else {
-      // Diğer durumlarda normal işlemi yap
-      router.push(path);
-    }
+  const handleExpand = (
+      event
+  ) => {
+    event.stopPropagation();
+    onExpand?.();
   };
 
+  console.log(level)
+
   return (
-    <div
-      onClick={handleClick}
+<div
+    key={id}
+    id={id}
+    onClick={onClick}
       className={classNames(
-        "flex items-center h-fit gap-4 rounded-lg",
+        "flex items-center h-fit gap-4 rounded-lg py-3 relative px-4",
         "cursor-pointer group",
         "transition-all duration-200 ease-in-out",
-        Icon && !label ? "justify-center" : "px-4",
-        pathname === path ? "bg-trans-purple" : "bg-white hover:bg-trans-purple",
-         !isOpen && isActive ? "!bg-trans-purple" : "",
-          className
+        active ? "!bg-trans-purple" : "bg-white hover:bg-trans-purple",
       )}
     >
       {Icon && <Icon className="stroke-gray" />}
       {label && label !== "" && <span className='text-nav-item'>{label}</span>}
+
+  {isChilds && !!id && (
+      <div
+          role="button"
+          className={
+        classNames(
+            "h-full transition-all duration-200 hover:bg-fuchsia-50 mr-1 p-1 rounded-xl ml-auto",
+            expanded || active ? "rotate-90" : ""
+        )
+          }
+          onClick={handleExpand}
+      >
+        <ChevronsRight
+            className="h-4 w-4 shrink-0 text-muted-foreground/50"
+        />
+      </div>
+  )}
     </div>
   );
 };
